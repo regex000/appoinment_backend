@@ -50,6 +50,10 @@ class Settings(BaseSettings):
     RATE_LIMIT_REQUESTS: int = 100
     RATE_LIMIT_PERIOD: int = 60
     
+    # Render/Production Configuration
+    PORT: int = 8000
+    WORKERS: int = 4
+    
     class Config:
         env_file = ".env"
         case_sensitive = True
@@ -68,3 +72,8 @@ if isinstance(settings.CORS_ORIGINS, str):
 # Ensure it's a list
 if not isinstance(settings.CORS_ORIGINS, list):
     settings.CORS_ORIGINS = list(settings.CORS_ORIGINS)
+
+# Production environment adjustments
+if settings.ENVIRONMENT == "production":
+    settings.DEBUG = False
+    settings.DATABASE_ECHO = False
