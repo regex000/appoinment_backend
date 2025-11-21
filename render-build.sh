@@ -13,7 +13,7 @@ pip install --upgrade pip setuptools wheel
 echo "📦 Installing dependencies..."
 pip install -r requirements.txt
 
-# Make start script executable
-chmod +x start.sh
+# Make start scripts executable
+chmod +x start.sh render.sh
 
 echo "✅ Build completed successfully!"
