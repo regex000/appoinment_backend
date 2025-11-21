@@ -19,7 +19,7 @@ except ImportError:
 # Import the FastAPI app
 from app.main import app
 
-# Export for gunicorn
+# Export for gunicorn with uvicorn workers
 __all__ = ["app"]
 
 if __name__ == "__main__":

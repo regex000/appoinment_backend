@@ -1,14 +1,15 @@
-"""Gunicorn configuration file for Render deployment"""
+"""Gunicorn configuration file for Render deployment with ASGI support"""
 
 import os
 import multiprocessing
 
-# Server socket
-bind = f"0.0.0.0:{os.getenv('PORT', '8000')}"
+# Server socket - bind to the PORT environment variable or default to 8000
+port = os.getenv('PORT', '8000')
+bind = f"0.0.0.0:{port}"
 backlog = 2048
 
-# Worker processes
-workers = int(os.getenv('WORKERS', multiprocessing.cpu_count() * 2 + 1))
+# Worker processes - use uvicorn workers for ASGI support
+workers = int(os.getenv('WORKERS', max(2, multiprocessing.cpu_count())))
 worker_class = "uvicorn.workers.UvicornWorker"
 worker_connections = 1000
 timeout = 120
@@ -43,3 +44,9 @@ ciphers = None
 
 # Application
 raw_env = []
+
+# Preload app to catch startup errors early
+preload_app = False
+
+# Worker class settings for uvicorn
+worker_class_str = "uvicorn.workers.UvicornWorker"
