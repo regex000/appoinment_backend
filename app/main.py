@@ -66,9 +66,19 @@ def create_app() -> FastAPI:
     logger.info(f"CORS Origins configured: {cors_origins}")
     logger.info(f"CORS Origins type: {type(cors_origins)}")
     
+    # Expand wildcard patterns for Netlify preview URLs
+    expanded_origins = []
+    for origin in cors_origins:
+        if origin == "https://*.netlify.app":
+            # For wildcard, we'll use allow_origin_regex instead
+            continue
+        expanded_origins.append(origin)
+    
+    # Use allow_origin_regex to support Netlify preview URLs
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=cors_origins,
+        allow_origins=expanded_origins,
+        allow_origin_regex=r"https://.*\.netlify\.app",  # Match all Netlify URLs
         allow_credentials=True,
         allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
         allow_headers=["*"],

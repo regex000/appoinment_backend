@@ -32,6 +32,7 @@ class Settings(BaseSettings):
         "http://127.0.0.1:3000",
         "https://nazmulalommedical.netlify.app",
         "https://www.nazmulalommedical.netlify.app",
+        "https://*.netlify.app",  # Allow all Netlify preview/branch deploys
     ]
     
     # Email Configuration
