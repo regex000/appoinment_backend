@@ -16,4 +16,4 @@ exec gunicorn \
   --timeout 120 \
   --access-logfile - \
   --error-logfile - \
-  app.main:app
+  wsgi:app
