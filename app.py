@@ -1,6 +1,6 @@
 """
-ASGI application entry point for Render deployment.
-This file is used when Render runs: gunicorn app:app
+FastAPI application entry point for Render deployment.
+Uses uvicorn directly (no gunicorn needed on Render free tier).
 """
 
 import sys
@@ -19,9 +19,17 @@ except ImportError:
 # Import the FastAPI app
 from app.main import app
 
-# Export for gunicorn with uvicorn workers
+# Export for uvicorn
 __all__ = ["app"]
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    import os
+    
+    port = int(os.getenv('PORT', 8000))
+    uvicorn.run(
+        app,
+        host="0.0.0.0",
+        port=port,
+        log_level="info"
+    )

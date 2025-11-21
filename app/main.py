@@ -31,15 +31,19 @@ async def lifespan(app: FastAPI):
         await init_db()
         logger.info("Database initialized successfully")
     except Exception as e:
-        logger.error(f"Failed to initialize database: {e}")
-        raise
+        logger.warning(f"Failed to initialize database on startup (will retry on first request): {e}")
+        # Don't raise - allow app to start even if DB is not ready
+        # This is important for Render free tier where DB might be slow to start
     
     yield
     
     # Shutdown
     logger.info("Shutting down application...")
-    await engine.dispose()
-    logger.info("Application shutdown complete")
+    try:
+        await engine.dispose()
+        logger.info("Application shutdown complete")
+    except Exception as e:
+        logger.warning(f"Error during shutdown: {e}")
 
 
 def create_app() -> FastAPI:

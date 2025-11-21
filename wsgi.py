@@ -1,4 +1,7 @@
-"""WSGI entry point for production deployment"""
+"""
+WSGI entry point - DO NOT USE DIRECTLY
+This is kept for reference only. Use app.py with uvicorn workers instead.
+"""
 
 import sys
 from pathlib import Path
@@ -14,6 +17,9 @@ except ImportError:
     pass
 
 from app.main import app
+
+# This exports the FastAPI app for use with gunicorn + uvicorn workers
+# Command: gunicorn --worker-class uvicorn.workers.UvicornWorker wsgi:app
 
 if __name__ == "__main__":
     import uvicorn
