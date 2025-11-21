@@ -59,7 +59,7 @@ def create_app() -> FastAPI:
         lifespan=lifespan,
     )
     
-    # CORS Middleware
+    # CORS Middleware - More permissive for development/testing
     cors_origins = settings.CORS_ORIGINS
     
     # Log CORS configuration
@@ -74,16 +74,29 @@ def create_app() -> FastAPI:
             continue
         expanded_origins.append(origin)
     
-    # Use allow_origin_regex to support Netlify preview URLs
+    # Add common development/testing origins
+    expanded_origins.extend([
+        "http://localhost:3000",
+        "http://localhost:8000",
+        "http://127.0.0.1:3000",
+        "http://127.0.0.1:8000",
+    ])
+    
+    # Remove duplicates
+    expanded_origins = list(set(expanded_origins))
+    
+    logger.info(f"Expanded CORS Origins: {expanded_origins}")
+    
+    # Use allow_origin_regex to support Netlify preview URLs and all subdomains
     app.add_middleware(
         CORSMiddleware,
         allow_origins=expanded_origins,
-        allow_origin_regex=r"https://.*\.netlify\.app",  # Match all Netlify URLs
+        allow_origin_regex=r"https://.*\.netlify\.app|http://localhost.*|http://127\.0\.0\.1.*",
         allow_credentials=True,
-        allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
+        allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH", "HEAD"],
         allow_headers=["*"],
         expose_headers=["*"],
-        max_age=3600,
+        max_age=86400,  # 24 hours
     )
     
     # Exception handler for validation errors
@@ -143,6 +156,38 @@ def create_app() -> FastAPI:
             "docs": "/docs",
             "redoc": "/redoc",
         }
+    
+    # Redirect endpoints for backward compatibility (without /api/v1 prefix)
+    # These handle cases where frontend calls /doctors instead of /api/v1/doctors
+    @app.get("/doctors", tags=["redirect"])
+    async def redirect_doctors():
+        """Redirect to /api/v1/doctors"""
+        from fastapi.responses import RedirectResponse
+        return RedirectResponse(url="/api/v1/doctors", status_code=307)
+    
+    @app.get("/departments", tags=["redirect"])
+    async def redirect_departments():
+        """Redirect to /api/v1/departments"""
+        from fastapi.responses import RedirectResponse
+        return RedirectResponse(url="/api/v1/departments", status_code=307)
+    
+    @app.get("/services", tags=["redirect"])
+    async def redirect_services():
+        """Redirect to /api/v1/services"""
+        from fastapi.responses import RedirectResponse
+        return RedirectResponse(url="/api/v1/services", status_code=307)
+    
+    @app.get("/appointments", tags=["redirect"])
+    async def redirect_appointments():
+        """Redirect to /api/v1/appointments"""
+        from fastapi.responses import RedirectResponse
+        return RedirectResponse(url="/api/v1/appointments", status_code=307)
+    
+    @app.get("/contacts", tags=["redirect"])
+    async def redirect_contacts():
+        """Redirect to /api/v1/contacts"""
+        from fastapi.responses import RedirectResponse
+        return RedirectResponse(url="/api/v1/contacts", status_code=307)
     
     # Include API routers
     app.include_router(api_router)
