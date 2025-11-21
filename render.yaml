@@ -7,14 +7,10 @@ services:
       pip install --upgrade pip setuptools wheel && \
       pip install -r requirements.txt
     startCommand: |
-      gunicorn \
-        --worker-class uvicorn.workers.UvicornWorker \
-        --workers 4 \
-        --bind 0.0.0.0:$PORT \
-        --timeout 120 \
-        --access-logfile - \
-        --error-logfile - \
-        app:app
+      uvicorn app:app \
+        --host 0.0.0.0 \
+        --port $PORT \
+        --log-level info
     envVars:
       - key: ENVIRONMENT
         value: production
@@ -22,7 +18,25 @@ services:
         value: "false"
       - key: PORT
         value: "8000"
-      - key: WORKERS
-        value: "4"
       - key: PYTHONUNBUFFERED
         value: "1"
+      - key: CORS_ORIGINS
+        value: '["https://nazmulalommedical.netlify.app", "https://www.nazmulalommedical.netlify.app", "https://*.netlify.app", "http://localhost:3000"]'
+      - key: APP_NAME
+        value: "Modern Hospital API"
+      - key: APP_VERSION
+        value: "1.0.0"
+      - key: ALGORITHM
+        value: "HS256"
+      - key: ACCESS_TOKEN_EXPIRE_MINUTES
+        value: "30"
+      - key: REFRESH_TOKEN_EXPIRE_DAYS
+        value: "7"
+      - key: API_V1_PREFIX
+        value: "/api/v1"
+      - key: RATE_LIMIT_ENABLED
+        value: "true"
+      - key: RATE_LIMIT_REQUESTS
+        value: "100"
+      - key: RATE_LIMIT_PERIOD
+        value: "60"
