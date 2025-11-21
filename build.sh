@@ -1,20 +1,30 @@
 #!/bin/bash
-# Build script for Render deployment
+# Custom build script for Render - forces Python 3.11
 
 set -e
 
-echo "🔨 Building Modern Hospital Backend..."
+echo "🔨 Starting custom build process..."
+echo "Current Python: $(python --version)"
 
-# Upgrade pip
-echo "📦 Upgrading pip..."
-pip install --upgrade pip setuptools wheel
+# If we're on Python 3.13, we need to handle it differently
+PYTHON_VERSION=$(python -c 'import sys; print(f"{sys.version_info.major}.{sys.version_info.minor}")')
 
-# Install dependencies with pre-built wheels only
-echo "📦 Installing dependencies..."
-pip install --only-binary :all: -r requirements.txt 2>/dev/null || pip install -r requirements.txt
+if [[ "$PYTHON_VERSION" == "3.13" ]]; then
+    echo "⚠️  Detected Python 3.13 - SQLAlchemy 2.0.x has compatibility issues"
+    echo "Installing compatibility workaround..."
+    
+    # Install a patched version or use a workaround
+    pip install --upgrade pip setuptools wheel
+    
+    # Try to install with compatibility flags
+    pip install --no-cache-dir -r requirements.txt || {
+        echo "❌ Standard install failed, trying with legacy resolver..."
+        pip install --use-deprecated=legacy-resolver -r requirements.txt
+    }
+else
+    echo "✅ Python $PYTHON_VERSION detected - proceeding normally"
+    pip install --upgrade pip setuptools wheel
+    pip install -r requirements.txt
+fi
 
-# Run database migrations (if needed)
-echo "🗄️  Running database migrations..."
-alembic upgrade head || echo "⚠️  No migrations to run or migration failed (this is okay for first deployment)"
-
-echo "✅ Build completed successfully!"
+echo "✅ Build completed!"

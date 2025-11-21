@@ -1,4 +1,7 @@
-"""WSGI entry point for production deployment"""
+"""
+ASGI application entry point for Render deployment.
+This file is used when Render runs: gunicorn app:app
+"""
 
 import sys
 from pathlib import Path
@@ -13,7 +16,11 @@ try:
 except ImportError:
     pass
 
+# Import the FastAPI app
 from app.main import app
+
+# Export for gunicorn
+__all__ = ["app"]
 
 if __name__ == "__main__":
     import uvicorn
