@@ -144,6 +144,7 @@ class Service(Base):
     name = Column(String(255), nullable=False, unique=True)
     description = Column(Text, nullable=True)
     icon = Column(String(100), nullable=True)
+    image_url = Column(String(500), nullable=True)
     is_active = Column(Boolean, default=True, index=True)
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
@@ -160,6 +161,7 @@ class AmbulanceService(Base):
     location = Column(String(500), nullable=True)
     latitude = Column(String(50), nullable=True)
     longitude = Column(String(50), nullable=True)
+    image_url = Column(String(500), nullable=True)
     available_24_7 = Column(Boolean, default=True)
     ambulance_count = Column(Integer, default=1)
     is_active = Column(Boolean, default=True, index=True)
@@ -205,6 +207,7 @@ class BloodBank(Base):
     location = Column(String(500), nullable=True)
     latitude = Column(String(50), nullable=True)
     longitude = Column(String(50), nullable=True)
+    image_url = Column(String(500), nullable=True)
     
     # Blood inventory
     blood_group_o_positive = Column(Integer, default=0)  # O+

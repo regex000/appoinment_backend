@@ -70,42 +70,50 @@ SERVICES_DATA = [
     {
         "name": "Emergency Care",
         "description": "24/7 emergency medical services",
-        "icon": "🚑"
+        "icon": "🚑",
+        "image_url": "https://via.placeholder.com/300x200?text=Emergency+Care"
     },
     {
         "name": "Outpatient Services",
         "description": "Non-emergency medical consultations",
-        "icon": "👨‍⚕️"
+        "icon": "👨‍⚕️",
+        "image_url": "https://via.placeholder.com/300x200?text=Outpatient+Services"
     },
     {
         "name": "Inpatient Services",
         "description": "Hospital admission and overnight care",
-        "icon": "🏥"
+        "icon": "🏥",
+        "image_url": "https://via.placeholder.com/300x200?text=Inpatient+Services"
     },
     {
         "name": "Diagnostic Services",
         "description": "Lab tests, X-rays, and imaging",
-        "icon": "🔬"
+        "icon": "🔬",
+        "image_url": "https://via.placeholder.com/300x200?text=Diagnostic+Services"
     },
     {
         "name": "Surgery Services",
         "description": "Surgical procedures and operations",
-        "icon": "🏨"
+        "icon": "🏨",
+        "image_url": "https://via.placeholder.com/300x200?text=Surgery+Services"
     },
     {
         "name": "Pharmacy Services",
         "description": "Prescription and over-the-counter medications",
-        "icon": "💊"
+        "icon": "💊",
+        "image_url": "https://via.placeholder.com/300x200?text=Pharmacy+Services"
     },
     {
         "name": "Rehabilitation Services",
         "description": "Physical therapy and recovery programs",
-        "icon": "🏃"
+        "icon": "🏃",
+        "image_url": "https://via.placeholder.com/300x200?text=Rehabilitation+Services"
     },
     {
         "name": "Maternity Services",
         "description": "Pregnancy and childbirth care",
-        "icon": "👶"
+        "icon": "👶",
+        "image_url": "https://via.placeholder.com/300x200?text=Maternity+Services"
     },
 ]
 
@@ -118,7 +126,8 @@ AMBULANCE_SERVICES_DATA = [
         "latitude": "23.8103",
         "longitude": "90.4125",
         "available_24_7": True,
-        "ambulance_count": 5
+        "ambulance_count": 5,
+        "image_url": "https://via.placeholder.com/300x200?text=Nazmul+Alom+Ambulance"
     },
     {
         "name": "Emergency Response Ambulance",
@@ -128,7 +137,8 @@ AMBULANCE_SERVICES_DATA = [
         "latitude": "23.8103",
         "longitude": "90.4125",
         "available_24_7": True,
-        "ambulance_count": 3
+        "ambulance_count": 3,
+        "image_url": "https://via.placeholder.com/300x200?text=Emergency+Response+Ambulance"
     },
     {
         "name": "Medical Transport Service",
@@ -138,7 +148,8 @@ AMBULANCE_SERVICES_DATA = [
         "latitude": "23.8103",
         "longitude": "90.4125",
         "available_24_7": False,
-        "ambulance_count": 2
+        "ambulance_count": 2,
+        "image_url": "https://via.placeholder.com/300x200?text=Medical+Transport+Service"
     },
     {
         "name": "Critical Care Ambulance",
@@ -148,7 +159,8 @@ AMBULANCE_SERVICES_DATA = [
         "latitude": "23.8103",
         "longitude": "90.4125",
         "available_24_7": True,
-        "ambulance_count": 2
+        "ambulance_count": 2,
+        "image_url": "https://via.placeholder.com/300x200?text=Critical+Care+Ambulance"
     },
     {
         "name": "Pediatric Ambulance Service",
@@ -158,7 +170,8 @@ AMBULANCE_SERVICES_DATA = [
         "latitude": "23.8103",
         "longitude": "90.4125",
         "available_24_7": True,
-        "ambulance_count": 1
+        "ambulance_count": 1,
+        "image_url": "https://via.placeholder.com/300x200?text=Pediatric+Ambulance+Service"
     },
 ]
 
@@ -363,6 +376,7 @@ BLOOD_BANKS_DATA = [
         "latitude": "23.8103",
         "longitude": "90.4125",
         "available_24_7": True,
+        "image_url": "https://via.placeholder.com/300x200?text=Central+Blood+Bank",
         "blood_group_o_positive": 45,
         "blood_group_o_negative": 20,
         "blood_group_a_positive": 35,
@@ -380,6 +394,7 @@ BLOOD_BANKS_DATA = [
         "latitude": "23.8103",
         "longitude": "90.4125",
         "available_24_7": True,
+        "image_url": "https://via.placeholder.com/300x200?text=Red+Crescent+Bank",
         "blood_group_o_positive": 50,
         "blood_group_o_negative": 25,
         "blood_group_a_positive": 40,
@@ -397,6 +412,7 @@ BLOOD_BANKS_DATA = [
         "latitude": "23.8103",
         "longitude": "90.4125",
         "available_24_7": False,
+        "image_url": "https://via.placeholder.com/300x200?text=Specialized+Blood+Services",
         "blood_group_o_positive": 30,
         "blood_group_o_negative": 15,
         "blood_group_a_positive": 25,
@@ -414,6 +430,7 @@ BLOOD_BANKS_DATA = [
         "latitude": "23.8103",
         "longitude": "90.4125",
         "available_24_7": True,
+        "image_url": "https://via.placeholder.com/300x200?text=Emergency+Blood+Bank",
         "blood_group_o_positive": 60,
         "blood_group_o_negative": 30,
         "blood_group_a_positive": 50,
@@ -434,7 +451,8 @@ ADDITIONAL_DOCTORS_DATA = [
         "specialty": "Neurology",
         "bio": "Experienced neurologist specializing in brain disorders",
         "experience_years": 12,
-        "department_name": "Neurology"
+        "department_name": "Neurology",
+        "image_url": "https://via.placeholder.com/300x300?text=Dr.+Michael+Johnson"
     },
     {
         "phone": "+11234567894",
@@ -444,7 +462,8 @@ ADDITIONAL_DOCTORS_DATA = [
         "specialty": "Orthopedics",
         "bio": "Orthopedic surgeon with expertise in joint replacement",
         "experience_years": 8,
-        "department_name": "Orthopedics"
+        "department_name": "Orthopedics",
+        "image_url": "https://via.placeholder.com/300x300?text=Dr.+Emily+Davis"
     },
     {
         "phone": "+11234567895",
@@ -454,7 +473,8 @@ ADDITIONAL_DOCTORS_DATA = [
         "specialty": "Pediatrics",
         "bio": "Pediatrician dedicated to children's health",
         "experience_years": 10,
-        "department_name": "Pediatrics"
+        "department_name": "Pediatrics",
+        "image_url": "https://via.placeholder.com/300x300?text=Dr.+Robert+Wilson"
     },
     {
         "phone": "+11234567896",
@@ -464,7 +484,8 @@ ADDITIONAL_DOCTORS_DATA = [
         "specialty": "Dentistry",
         "bio": "Cosmetic and general dentist",
         "experience_years": 7,
-        "department_name": "Dentistry"
+        "department_name": "Dentistry",
+        "image_url": "https://via.placeholder.com/300x300?text=Dr.+Jennifer+Brown"
     },
     {
         "phone": "+11234567897",
@@ -474,7 +495,8 @@ ADDITIONAL_DOCTORS_DATA = [
         "specialty": "Dermatology",
         "bio": "Dermatologist specializing in skin conditions",
         "experience_years": 9,
-        "department_name": "Dermatology"
+        "department_name": "Dermatology",
+        "image_url": "https://via.placeholder.com/300x300?text=Dr.+David+Martinez"
     },
     {
         "phone": "+11234567898",
@@ -484,7 +506,8 @@ ADDITIONAL_DOCTORS_DATA = [
         "specialty": "Ophthalmology",
         "bio": "Eye specialist with expertise in vision correction",
         "experience_years": 11,
-        "department_name": "Ophthalmology"
+        "department_name": "Ophthalmology",
+        "image_url": "https://via.placeholder.com/300x300?text=Dr.+Lisa+Anderson"
     },
     {
         "phone": "+11234567899",
@@ -494,7 +517,8 @@ ADDITIONAL_DOCTORS_DATA = [
         "specialty": "Psychiatry",
         "bio": "Psychiatrist specializing in mental health treatment",
         "experience_years": 13,
-        "department_name": "Psychiatry"
+        "department_name": "Psychiatry",
+        "image_url": "https://via.placeholder.com/300x300?text=Dr.+James+Taylor"
     },
 ]
 
@@ -648,6 +672,7 @@ async def seed_additional_doctors(session: AsyncSession):
             experience_years=doctor_data["experience_years"],
             department_id=department.id,
             is_available=True,
+            image_url=doctor_data.get("image_url"),
         )
         session.add(doctor)
         await session.flush()
