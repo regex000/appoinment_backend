@@ -17,7 +17,7 @@ from sqlalchemy import select
 
 from app.db.session import AsyncSessionLocal, init_db
 from app.db.models import (
-    Department, Service, AmbulanceService, EyeProduct, Doctor, User
+    Department, Service, AmbulanceService, EyeProduct, Doctor, User, BloodBank
 )
 from app.core.security import SecurityUtils
 
@@ -354,6 +354,77 @@ EYE_PRODUCTS_DATA = [
     },
 ]
 
+BLOOD_BANKS_DATA = [
+    {
+        "name": "Central Blood Bank Dhaka",
+        "description": "Main blood bank with comprehensive blood services",
+        "phone": "+8801900000001",
+        "location": "Dhaka, Bangladesh",
+        "latitude": "23.8103",
+        "longitude": "90.4125",
+        "available_24_7": True,
+        "blood_group_o_positive": 45,
+        "blood_group_o_negative": 20,
+        "blood_group_a_positive": 35,
+        "blood_group_a_negative": 15,
+        "blood_group_b_positive": 40,
+        "blood_group_b_negative": 18,
+        "blood_group_ab_positive": 25,
+        "blood_group_ab_negative": 10,
+    },
+    {
+        "name": "Red Crescent Blood Bank",
+        "description": "Blood bank operated by Red Crescent Society",
+        "phone": "+8801900000002",
+        "location": "Dhaka, Bangladesh",
+        "latitude": "23.8103",
+        "longitude": "90.4125",
+        "available_24_7": True,
+        "blood_group_o_positive": 50,
+        "blood_group_o_negative": 25,
+        "blood_group_a_positive": 40,
+        "blood_group_a_negative": 20,
+        "blood_group_b_positive": 45,
+        "blood_group_b_negative": 22,
+        "blood_group_ab_positive": 30,
+        "blood_group_ab_negative": 12,
+    },
+    {
+        "name": "Specialized Blood Services",
+        "description": "Specialized blood bank with rare blood types",
+        "phone": "+8801900000003",
+        "location": "Dhaka, Bangladesh",
+        "latitude": "23.8103",
+        "longitude": "90.4125",
+        "available_24_7": False,
+        "blood_group_o_positive": 30,
+        "blood_group_o_negative": 15,
+        "blood_group_a_positive": 25,
+        "blood_group_a_negative": 10,
+        "blood_group_b_positive": 28,
+        "blood_group_b_negative": 12,
+        "blood_group_ab_positive": 18,
+        "blood_group_ab_negative": 8,
+    },
+    {
+        "name": "Emergency Blood Bank",
+        "description": "24/7 emergency blood supply service",
+        "phone": "+8801900000004",
+        "location": "Dhaka, Bangladesh",
+        "latitude": "23.8103",
+        "longitude": "90.4125",
+        "available_24_7": True,
+        "blood_group_o_positive": 60,
+        "blood_group_o_negative": 30,
+        "blood_group_a_positive": 50,
+        "blood_group_a_negative": 25,
+        "blood_group_b_positive": 55,
+        "blood_group_b_negative": 28,
+        "blood_group_ab_positive": 35,
+        "blood_group_ab_negative": 15,
+    },
+]
+
 ADDITIONAL_DOCTORS_DATA = [
     {
         "phone": "+11234567893",
@@ -512,6 +583,27 @@ async def seed_eye_products(session: AsyncSession):
     print(f"✓ {len(EYE_PRODUCTS_DATA)} eye products processed")
 
 
+async def seed_blood_banks(session: AsyncSession):
+    """Seed blood banks"""
+    print("\n📝 Seeding Blood Banks...")
+    
+    for bank_data in BLOOD_BANKS_DATA:
+        # Check if blood bank already exists
+        existing = await session.execute(
+            select(BloodBank).where(BloodBank.name == bank_data["name"])
+        )
+        if existing.scalars().first():
+            print(f"  ⚠️  Blood Bank '{bank_data['name']}' already exists")
+            continue
+        
+        bank = BloodBank(**bank_data, is_active=True)
+        session.add(bank)
+        print(f"  ✓ Created: {bank_data['name']}")
+    
+    await session.flush()
+    print(f"✓ {len(BLOOD_BANKS_DATA)} blood banks processed")
+
+
 async def seed_additional_doctors(session: AsyncSession):
     """Seed additional doctors"""
     print("\n📝 Seeding Additional Doctors...")
@@ -583,6 +675,7 @@ async def seed_all_data():
             await seed_services(session)
             await seed_ambulance_services(session)
             await seed_eye_products(session)
+            await seed_blood_banks(session)
             await seed_additional_doctors(session)
             
             # Commit all changes
@@ -598,6 +691,7 @@ async def seed_all_data():
             print(f"  • Services: {len(SERVICES_DATA)}")
             print(f"  • Ambulance Services: {len(AMBULANCE_SERVICES_DATA)}")
             print(f"  • Eye Products: {len(EYE_PRODUCTS_DATA)}")
+            print(f"  • Blood Banks: {len(BLOOD_BANKS_DATA)}")
             print(f"  • Additional Doctors: {len(ADDITIONAL_DOCTORS_DATA)}")
             
             total_items = (
@@ -605,6 +699,7 @@ async def seed_all_data():
                 len(SERVICES_DATA) +
                 len(AMBULANCE_SERVICES_DATA) +
                 len(EYE_PRODUCTS_DATA) +
+                len(BLOOD_BANKS_DATA) +
                 len(ADDITIONAL_DOCTORS_DATA)
             )
             print(f"\n  📈 Total Items Seeded: {total_items}")

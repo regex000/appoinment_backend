@@ -194,6 +194,38 @@ class EyeProduct(Base):
     )
 
 
+class BloodBank(Base):
+    """Blood Bank model"""
+    __tablename__ = "blood_banks"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String(255), nullable=False, unique=True, index=True)
+    description = Column(Text, nullable=True)
+    phone = Column(String(20), nullable=False, index=True)
+    location = Column(String(500), nullable=True)
+    latitude = Column(String(50), nullable=True)
+    longitude = Column(String(50), nullable=True)
+    
+    # Blood inventory
+    blood_group_o_positive = Column(Integer, default=0)  # O+
+    blood_group_o_negative = Column(Integer, default=0)  # O-
+    blood_group_a_positive = Column(Integer, default=0)  # A+
+    blood_group_a_negative = Column(Integer, default=0)  # A-
+    blood_group_b_positive = Column(Integer, default=0)  # B+
+    blood_group_b_negative = Column(Integer, default=0)  # B-
+    blood_group_ab_positive = Column(Integer, default=0)  # AB+
+    blood_group_ab_negative = Column(Integer, default=0)  # AB-
+    
+    available_24_7 = Column(Boolean, default=True)
+    is_active = Column(Boolean, default=True, index=True)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    
+    __table_args__ = (
+        Index('idx_blood_banks_active', 'is_active'),
+    )
+
+
 class AuditLog(Base):
     """Audit log model for tracking changes"""
     __tablename__ = "audit_logs"

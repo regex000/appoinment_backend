@@ -2,7 +2,7 @@
 
 from fastapi import APIRouter
 
-from app.api.v1.endpoints import auth, departments, doctors, appointments, contacts, admin, services, ambulance, eye_product
+from app.api.v1.endpoints import auth, departments, doctors, appointments, contacts, admin, services, ambulance, eye_product, blood_bank
 
 api_router = APIRouter(prefix="/api/v1")
 
@@ -15,4 +15,5 @@ api_router.include_router(contacts.router)
 api_router.include_router(services.router)
 api_router.include_router(ambulance.router)
 api_router.include_router(eye_product.router)
+api_router.include_router(blood_bank.router)
 api_router.include_router(admin.router)
