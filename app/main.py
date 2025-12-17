@@ -5,8 +5,10 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from fastapi.exceptions import RequestValidationError
+from fastapi.staticfiles import StaticFiles
 from datetime import datetime
 import logging
+import os
 
 from app.config import settings
 from app.api.v1.api import api_router
@@ -203,6 +205,14 @@ def create_app() -> FastAPI:
     
     # Include API routers
     app.include_router(api_router)
+    
+    # Mount static files directory for doctor photos and other assets
+    static_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "public")
+    if os.path.exists(static_dir):
+        app.mount("/public", StaticFiles(directory=static_dir), name="public")
+        logger.info(f"Static files mounted at /public from {static_dir}")
+    else:
+        logger.warning(f"Static files directory not found at {static_dir}")
     
     logger.info(f"Application created: {settings.APP_NAME} v{settings.APP_VERSION}")
     
