@@ -68,24 +68,25 @@ def create_app() -> FastAPI:
     logger.info(f"CORS Origins configured: {cors_origins}")
     logger.info(f"CORS Origins type: {type(cors_origins)}")
     
-    # Expand wildcard patterns for Netlify preview URLs
+    # Build expanded origins list
     expanded_origins = []
     for origin in cors_origins:
-        if origin == "https://*.netlify.app":
-            # For wildcard, we'll use allow_origin_regex instead
-            continue
-        expanded_origins.append(origin)
+        if origin != "https://*.netlify.app":  # Skip wildcard, we'll use regex
+            expanded_origins.append(origin)
     
     # Add common development/testing origins
     expanded_origins.extend([
         "http://localhost:3000",
         "http://localhost:8000",
+        "http://localhost:3001",
         "http://127.0.0.1:3000",
         "http://127.0.0.1:8000",
+        "http://127.0.0.1:3001",
     ])
     
-    # Remove duplicates
-    expanded_origins = list(set(expanded_origins))
+    # Remove duplicates while preserving order
+    seen = set()
+    expanded_origins = [x for x in expanded_origins if not (x in seen or seen.add(x))]
     
     logger.info(f"Expanded CORS Origins: {expanded_origins}")
     

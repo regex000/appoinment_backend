@@ -70,11 +70,27 @@ async def get_doctor(
     
     department = doctor.department
     
-    return {
-        **DoctorResponse.from_orm(doctor).dict(),
+    # Convert doctor model to dict for response
+    doctor_dict = {
+        "id": doctor.id,
+        "name": doctor.name,
+        "email": doctor.email,
+        "phone": doctor.phone,
+        "specialty": doctor.specialty,
+        "department_id": doctor.department_id,
+        "image_url": doctor.image_url,
+        "bio": doctor.bio,
+        "experience_years": doctor.experience_years,
+        "is_available": doctor.is_available,
+        "profile_data": doctor.profile_data,
+        "is_active": doctor.is_active,
+        "created_at": doctor.created_at,
+        "updated_at": doctor.updated_at,
         "department_name": department.name if department else None,
         "appointments_count": len(doctor.appointments) if doctor.appointments else 0,
     }
+    
+    return doctor_dict
 
 
 @router.get("/department/{department_id}", response_model=list[DoctorResponse])
