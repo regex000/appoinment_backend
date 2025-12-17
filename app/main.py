@@ -3,7 +3,6 @@
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
-from starlette.middleware.gzip import GZIPMiddleware
 from fastapi.responses import JSONResponse
 from fastapi.exceptions import RequestValidationError
 from datetime import datetime
@@ -99,9 +98,6 @@ def create_app() -> FastAPI:
         expose_headers=["*"],
         max_age=86400,  # 24 hours
     )
-    
-    # Add GZIP compression middleware
-    app.add_middleware(GZIPMiddleware, minimum_size=1000)
     
     # Security headers middleware
     @app.middleware("http")
