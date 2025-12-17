@@ -11,7 +11,7 @@ from app.core.constants import AppointmentStatus, ContactMessageStatus
 
 
 class User(Base):
-    """User model for authentication"""
+    """User model for authentication - Patients only"""
     __tablename__ = "users"
     
     id = Column(Integer, primary_key=True, index=True)
@@ -35,13 +35,11 @@ class User(Base):
     
     is_active = Column(Boolean, default=True, index=True)
     is_admin = Column(Boolean, default=False)
-    is_doctor = Column(Boolean, default=False)
     created_at = Column(DateTime, default=datetime.utcnow, index=True)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     
     # Relationships
     appointments = relationship("Appointment", back_populates="patient", foreign_keys="Appointment.patient_id")
-    doctor_profile = relationship("Doctor", back_populates="user", uselist=False)
     
     __table_args__ = (
         Index('idx_users_phone_active', 'phone', 'is_active'),
@@ -66,27 +64,34 @@ class Department(Base):
 
 
 class Doctor(Base):
-    """Doctor model"""
+    """Doctor model with flexible profile data"""
     __tablename__ = "doctors"
     
     id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(Integer, ForeignKey("users.id"), nullable=False, unique=True, index=True)
+    name = Column(String(255), nullable=False, index=True)
+    email = Column(String(255), nullable=True, index=True)
+    phone = Column(String(20), nullable=True, index=True)
     specialty = Column(String(255), nullable=False, index=True)
+    department_id = Column(Integer, ForeignKey("departments.id"), nullable=False, index=True)
     image_url = Column(String(500), nullable=True)
     bio = Column(Text, nullable=True)
     experience_years = Column(Integer, nullable=True)
-    department_id = Column(Integer, ForeignKey("departments.id"), nullable=False, index=True)
     is_available = Column(Boolean, default=True, index=True)
-    created_at = Column(DateTime, default=datetime.utcnow)
+    
+    # Flexible profile data - store any custom fields as JSON
+    profile_data = Column(JSON, default={}, nullable=False)
+    
+    is_active = Column(Boolean, default=True, index=True)
+    created_at = Column(DateTime, default=datetime.utcnow, index=True)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     
     # Relationships
-    user = relationship("User", back_populates="doctor_profile")
     department = relationship("Department", back_populates="doctors")
     appointments = relationship("Appointment", back_populates="doctor", foreign_keys="Appointment.doctor_id")
     
     __table_args__ = (
         Index('idx_doctors_department_available', 'department_id', 'is_available'),
+        Index('idx_doctors_active', 'is_active'),
     )
 
 

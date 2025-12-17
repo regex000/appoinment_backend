@@ -179,17 +179,9 @@ async def get_user_stats(
         )
         admin_users = admin_result.scalar() or 0
         
-        # Doctor users
-        doctor_result = await db.execute(
-            select(func.count(User.id)).where(User.is_doctor == True)
-        )
-        doctor_users = doctor_result.scalar() or 0
-        
-        # Patient users (not admin, not doctor)
+        # Patient users (all users are patients)
         patient_result = await db.execute(
-            select(func.count(User.id)).where(
-                (User.is_admin == False) & (User.is_doctor == False)
-            )
+            select(func.count(User.id)).where(User.is_admin == False)
         )
         patient_users = patient_result.scalar() or 0
         
@@ -197,7 +189,6 @@ async def get_user_stats(
             "total_users": total_users,
             "active_users": active_users,
             "admin_users": admin_users,
-            "doctor_users": doctor_users,
             "patient_users": patient_users,
             "timestamp": datetime.utcnow().isoformat()
         }
