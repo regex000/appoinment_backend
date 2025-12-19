@@ -1,9 +1,10 @@
 """Doctor endpoints"""
 
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, Query, Request
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 from sqlalchemy import select
+import os
 
 from app.db.session import get_db
 from app.db.models import Doctor
@@ -22,6 +23,38 @@ from app.core.constants import DEFAULT_PAGE_SIZE, MAX_PAGE_SIZE
 router = APIRouter(prefix="/doctors", tags=["doctors"])
 
 
+def get_absolute_image_url(image_url: str, request: Request = None) -> str:
+    """
+    Convert relative image URL to absolute URL pointing to the backend API.
+    
+    Args:
+        image_url: The image URL (can be relative like /public/doctors/image.png or absolute)
+        request: FastAPI Request object (optional, for getting base URL)
+    
+    Returns:
+        Absolute URL to the image
+    """
+    if not image_url:
+        return None
+    
+    # If already absolute, return as is
+    if image_url.startswith("http://") or image_url.startswith("https://"):
+        return image_url
+    
+    # Get base URL from environment or request
+    if request:
+        base_url = f"{request.url.scheme}://{request.url.netloc}"
+    else:
+        # Fallback to environment variable or default
+        base_url = os.getenv("BACKEND_URL", "https://appoinment-backend-5oxs.onrender.com")
+    
+    # Ensure image_url starts with /
+    if not image_url.startswith("/"):
+        image_url = "/" + image_url
+    
+    return f"{base_url}{image_url}"
+
+
 @router.get("", response_model=list[DoctorResponse])
 async def list_doctors(
     skip: int = Query(0, ge=0),
@@ -29,6 +62,7 @@ async def list_doctors(
     department_id: int = Query(None),
     specialty: str = Query(None),
     available_only: bool = Query(True),
+    request: Request = None,
     db: AsyncSession = Depends(get_db)
 ):
     """
@@ -49,12 +83,18 @@ async def list_doctors(
     else:
         doctors, _ = await crud_doctor.get_all(db, skip, limit)
     
+    # Convert image URLs to absolute URLs
+    for doctor in doctors:
+        if hasattr(doctor, 'image_url') and doctor.image_url:
+            doctor.image_url = get_absolute_image_url(doctor.image_url, request)
+    
     return doctors
 
 
 @router.get("/{doctor_id}", response_model=DoctorDetailResponse)
 async def get_doctor(
     doctor_id: int,
+    request: Request = None,
     db: AsyncSession = Depends(get_db)
 ):
     """Get doctor details"""
@@ -78,7 +118,7 @@ async def get_doctor(
         "phone": doctor.phone,
         "specialty": doctor.specialty,
         "department_id": doctor.department_id,
-        "image_url": doctor.image_url,
+        "image_url": get_absolute_image_url(doctor.image_url, request),
         "bio": doctor.bio,
         "experience_years": doctor.experience_years,
         "is_available": doctor.is_available,
@@ -98,6 +138,7 @@ async def get_doctors_by_department(
     department_id: int,
     skip: int = Query(0, ge=0),
     limit: int = Query(DEFAULT_PAGE_SIZE, ge=1, le=MAX_PAGE_SIZE),
+    request: Request = None,
     db: AsyncSession = Depends(get_db)
 ):
     """Get doctors by department"""
@@ -107,6 +148,12 @@ async def get_doctors_by_department(
         raise NotFoundException(detail="Department not found")
     
     doctors = await crud_doctor.get_by_department(db, department_id, skip, limit)
+    
+    # Convert image URLs to absolute URLs
+    for doctor in doctors:
+        if hasattr(doctor, 'image_url') and doctor.image_url:
+            doctor.image_url = get_absolute_image_url(doctor.image_url, request)
+    
     return doctors
 
 
