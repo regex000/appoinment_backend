@@ -96,11 +96,11 @@ def create_app() -> FastAPI:
         CORSMiddleware,
         allow_origins=expanded_origins,
         allow_origin_regex=r"https://[a-zA-Z0-9\-\.]+\.netlify\.app|http://localhost.*|http://127\.0\.0\.1.*",
-        allow_credentials=True,
-        allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH", "HEAD"],
+        allow_credentials=False,
+        allow_methods=["*"],
         allow_headers=["*"],
         expose_headers=["*"],
-        max_age=86400,  # 24 hours
+        max_age=3600,
     )
     
     # Security headers middleware

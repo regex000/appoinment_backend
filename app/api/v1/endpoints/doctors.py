@@ -62,7 +62,6 @@ async def list_doctors(
     department_id: int = Query(None),
     specialty: str = Query(None),
     available_only: bool = Query(True),
-    request: Request = None,
     db: AsyncSession = Depends(get_db)
 ):
     """
@@ -86,7 +85,30 @@ async def list_doctors(
     # Convert image URLs to absolute URLs
     for doctor in doctors:
         if hasattr(doctor, 'image_url') and doctor.image_url:
-            doctor.image_url = get_absolute_image_url(doctor.image_url, request)
+            doctor.image_url = get_absolute_image_url(doctor.image_url, None)
+    
+    return doctors
+
+
+@router.get("/department/{department_id}", response_model=list[DoctorResponse])
+async def get_doctors_by_department(
+    department_id: int,
+    skip: int = Query(0, ge=0),
+    limit: int = Query(DEFAULT_PAGE_SIZE, ge=1, le=MAX_PAGE_SIZE),
+    db: AsyncSession = Depends(get_db)
+):
+    """Get doctors by department"""
+    # Verify department exists
+    department = await crud_department.get(db, department_id)
+    if not department:
+        raise NotFoundException(detail="Department not found")
+    
+    doctors = await crud_doctor.get_by_department(db, department_id, skip, limit)
+    
+    # Convert image URLs to absolute URLs
+    for doctor in doctors:
+        if hasattr(doctor, 'image_url') and doctor.image_url:
+            doctor.image_url = get_absolute_image_url(doctor.image_url, None)
     
     return doctors
 
@@ -94,14 +116,13 @@ async def list_doctors(
 @router.get("/{doctor_id}", response_model=DoctorDetailResponse)
 async def get_doctor(
     doctor_id: int,
-    request: Request = None,
     db: AsyncSession = Depends(get_db)
 ):
     """Get doctor details"""
     result = await db.execute(
         select(Doctor)
         .where(Doctor.id == doctor_id)
-        .options(selectinload(Doctor.department))
+        .options(selectinload(Doctor.department), selectinload(Doctor.appointments))
     )
     doctor = result.scalars().first()
     
@@ -118,7 +139,7 @@ async def get_doctor(
         "phone": doctor.phone,
         "specialty": doctor.specialty,
         "department_id": doctor.department_id,
-        "image_url": get_absolute_image_url(doctor.image_url, request),
+        "image_url": get_absolute_image_url(doctor.image_url, None),
         "bio": doctor.bio,
         "experience_years": doctor.experience_years,
         "is_available": doctor.is_available,
@@ -131,30 +152,6 @@ async def get_doctor(
     }
     
     return doctor_dict
-
-
-@router.get("/department/{department_id}", response_model=list[DoctorResponse])
-async def get_doctors_by_department(
-    department_id: int,
-    skip: int = Query(0, ge=0),
-    limit: int = Query(DEFAULT_PAGE_SIZE, ge=1, le=MAX_PAGE_SIZE),
-    request: Request = None,
-    db: AsyncSession = Depends(get_db)
-):
-    """Get doctors by department"""
-    # Verify department exists
-    department = await crud_department.get(db, department_id)
-    if not department:
-        raise NotFoundException(detail="Department not found")
-    
-    doctors = await crud_doctor.get_by_department(db, department_id, skip, limit)
-    
-    # Convert image URLs to absolute URLs
-    for doctor in doctors:
-        if hasattr(doctor, 'image_url') and doctor.image_url:
-            doctor.image_url = get_absolute_image_url(doctor.image_url, request)
-    
-    return doctors
 
 
 @router.post("", response_model=DoctorResponse, status_code=201)
