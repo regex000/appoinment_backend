@@ -208,12 +208,25 @@ def create_app() -> FastAPI:
     app.include_router(api_router)
     
     # Mount static files directory for doctor photos and other assets
-    static_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "public")
-    if os.path.exists(static_dir):
+    # Try multiple possible locations for static files
+    possible_static_dirs = [
+        os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "public"),  # Local development
+        "/opt/render/project/public",  # Render deployment
+        os.path.join(os.getcwd(), "public"),  # Current working directory
+    ]
+    
+    static_dir = None
+    for dir_path in possible_static_dirs:
+        if os.path.exists(dir_path):
+            static_dir = dir_path
+            logger.info(f"Static files directory found at {dir_path}")
+            break
+    
+    if static_dir:
         app.mount("/public", StaticFiles(directory=static_dir), name="public")
         logger.info(f"Static files mounted at /public from {static_dir}")
     else:
-        logger.warning(f"Static files directory not found at {static_dir}")
+        logger.warning(f"Static files directory not found at any of: {possible_static_dirs}")
     
     logger.info(f"Application created: {settings.APP_NAME} v{settings.APP_VERSION}")
     

@@ -5,7 +5,9 @@ services:
     pythonVersion: 3.11
     buildCommand: |
       pip install --upgrade pip setuptools wheel && \
-      pip install -r requirements.txt
+      pip install -r requirements.txt && \
+      mkdir -p /opt/render/project/public/doctors && \
+      cp -r public/doctors/* /opt/render/project/public/doctors/ 2>/dev/null || true
     startCommand: |
       uvicorn app.main:app \
         --host 0.0.0.0 \
