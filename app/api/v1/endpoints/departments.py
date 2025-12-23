@@ -1,7 +1,8 @@
 """Department endpoints"""
 
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, Query, Request
 from sqlalchemy.ext.asyncio import AsyncSession
+import os
 
 from app.db.session import get_db
 from app.schemas.department import (
@@ -16,6 +17,38 @@ from app.core.exceptions import NotFoundException, ConflictException
 from app.core.constants import DEFAULT_PAGE_SIZE, MAX_PAGE_SIZE
 
 router = APIRouter(prefix="/departments", tags=["departments"])
+
+
+def get_absolute_image_url(image_url: str, request: Request = None) -> str:
+    """
+    Convert relative image URL to absolute URL pointing to the backend API.
+    
+    Args:
+        image_url: The image URL (can be relative like /public/departments/image.svg or absolute)
+        request: FastAPI Request object (optional, for getting base URL)
+    
+    Returns:
+        Absolute URL to the image
+    """
+    if not image_url:
+        return None
+    
+    # If already absolute, return as is
+    if image_url.startswith("http://") or image_url.startswith("https://"):
+        return image_url
+    
+    # Get base URL from environment or request
+    if request:
+        base_url = f"{request.url.scheme}://{request.url.netloc}"
+    else:
+        # Fallback to environment variable or default
+        base_url = os.getenv("BACKEND_URL", "https://appoinment-backend-5oxs.onrender.com")
+    
+    # Ensure image_url starts with /
+    if not image_url.startswith("/"):
+        image_url = "/" + image_url
+    
+    return f"{base_url}{image_url}"
 
 
 @router.get("", response_model=list[DepartmentResponse])
@@ -34,6 +67,12 @@ async def list_departments(
     """
     filters = {"is_active": True} if active_only else None
     departments, _ = await crud_department.get_all(db, skip=skip, limit=limit, filters=filters)
+    
+    # Convert image URLs to absolute URLs
+    for department in departments:
+        if hasattr(department, 'image_url') and department.image_url:
+            department.image_url = get_absolute_image_url(department.image_url, None)
+    
     return departments
 
 
@@ -50,8 +89,14 @@ async def get_department(
     # Get doctors count
     doctors_count = len(department.doctors) if department.doctors else 0
     
+    dept_dict = DepartmentResponse.from_orm(department).dict()
+    
+    # Convert image URL to absolute URL
+    if dept_dict.get('image_url'):
+        dept_dict['image_url'] = get_absolute_image_url(dept_dict['image_url'], None)
+    
     return {
-        **DepartmentResponse.from_orm(department).dict(),
+        **dept_dict,
         "doctors_count": doctors_count
     }
 
@@ -69,6 +114,11 @@ async def create_department(
         raise ConflictException(detail="Department with this name already exists")
     
     department = await crud_department.create(db, department_in)
+    
+    # Convert image URL to absolute URL
+    if hasattr(department, 'image_url') and department.image_url:
+        department.image_url = get_absolute_image_url(department.image_url, None)
+    
     return department
 
 
@@ -91,6 +141,11 @@ async def update_department(
             raise ConflictException(detail="Department with this name already exists")
     
     department = await crud_department.update(db, department, department_in)
+    
+    # Convert image URL to absolute URL
+    if hasattr(department, 'image_url') and department.image_url:
+        department.image_url = get_absolute_image_url(department.image_url, None)
+    
     return department
 
 
