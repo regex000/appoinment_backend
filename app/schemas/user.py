@@ -78,6 +78,7 @@ class UserResponse(UserBase, PatientProfileCreate):
     id: int
     is_active: bool
     is_admin: bool
+    is_doctor: bool = False
     created_at: datetime
     updated_at: datetime
     

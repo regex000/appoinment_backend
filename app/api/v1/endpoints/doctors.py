@@ -59,7 +59,7 @@ def get_absolute_image_url(image_url: str, request: Request = None) -> str:
 async def list_doctors(
     skip: int = Query(0, ge=0),
     limit: int = Query(DEFAULT_PAGE_SIZE, ge=1, le=MAX_PAGE_SIZE),
-    department_id: int = Query(None),
+    department_id: int = Query(None, alias="dept"),
     specialty: str = Query(None),
     available_only: bool = Query(True),
     db: AsyncSession = Depends(get_db)
@@ -69,7 +69,7 @@ async def list_doctors(
     
     - **skip**: Number of records to skip
     - **limit**: Number of records to return
-    - **department_id**: Filter by department
+    - **department_id** or **dept**: Filter by department
     - **specialty**: Filter by specialty
     - **available_only**: Return only available doctors
     """
